@@ -1,10 +1,13 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import {Formik,Form, Field} from 'formik'
-
-
+import {Formik,Form, Field,ErrorMessage } from 'formik'
+import InputAdornment from '@material-ui/core/InputAdornment';
+import { IconButton } from '@material-ui/core';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import * as Yup from "yup";
 const useStyles = makeStyles((theme) => ({
   root: {
     margin: theme.spacing(1),
@@ -24,33 +27,36 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 const initialValues ={
-  CustomerID : ""
+  customerId : ""
 }
-
-const Input = ({giveRecomadations}) => {
+const formSchema=Yup.object().shape({
+  customerId:Yup.string().required('Required')
+})
+const InputTextBox = ({giveRecomadations}) => {
   const classes = useStyles();
   return (
     <div >
       <Formik
         initialValues={initialValues}
+        validationSchema={formSchema}
         onSubmit ={(values, props)=>{
-            console.log("check props",props)
-            console.log("check values",values)
-            giveRecomadations(props)
-            props.resetForm()
+            giveRecomadations(values.customerId)
         }}
       >
         {props => (
-      <Form autoCapitalize autoComplete='off' className={classes.root}>
-      <Field id="outlined-basic" name = "CustomerID" label="Customer ID" variant="outlined" as={TextField} fullWidth/>
-      <Button variant="contained"  type="submit" color="primary" style={{ margin:10}} >
-        Submit
-      </Button>
+      <Form autoCapitalize autoComplete='off' >
+      <Field id="outlined-basic" name = "customerId" label="Customer ID" placeholder="Enter customer id"
+        as={TextField} fullWidth required InputProps={{
+          endAdornment: <InputAdornment position="end">
+            <IconButton><ArrowForwardIcon type="submit"/>
+            </IconButton></InputAdornment>,
+        }} helperText={<ErrorMessage name="customerId" />}/>
     </Form>
         )}
     </Formik>
     </div>
   );
 }
+//input component
 
-export default Input;
+export default InputTextBox;
